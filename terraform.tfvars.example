@@ -1,0 +1,15 @@
+# Copy this to terraform.tfvars and fill in your actual values.
+# terraform.tfvars is gitignored by convention — never commit real IDs/secrets.
+
+vpc_id            = "vpc-xxxxxxxxxxxxxxxxx"
+subnet_id         = "subnet-xxxxxxxxxxxxxxxxx"
+availability_zone = "ap-south-1a"
+key_name          = "your-ec2-keypair-name"
+allowed_ssh_cidr  = "203.0.113.0/24" # replace with your actual office/VPN IP range
+
+google_calendar_id       = "your_calendar_id@group.calendar.google.com"
+google_creds_secret_name = "staging/google-calendar-creds"
+
+# Store the Slack app's Signing Secret (from api.slack.com/apps > your app > Basic Information)
+# as a plain-string secret in Secrets Manager under this name.
+slack_signing_secret_name = "staging/slack-signing-secret"

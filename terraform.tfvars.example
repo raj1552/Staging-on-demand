@@ -1,5 +1,5 @@
 # Copy this to terraform.tfvars and fill in your actual values.
-# terraform.tfvars is gitignored by convention — never commit real IDs/secrets.
+# terraform.tfvars is gitignored by convention - never commit real IDs/secrets.
 
 vpc_id            = "vpc-xxxxxxxxxxxxxxxxx"
 subnet_id         = "subnet-xxxxxxxxxxxxxxxxx"
@@ -13,3 +13,23 @@ google_creds_secret_name = "staging/google-calendar-creds"
 # Store the Slack app's Signing Secret (from api.slack.com/apps > your app > Basic Information)
 # as a plain-string secret in Secrets Manager under this name.
 slack_signing_secret_name = "staging/slack-signing-secret"
+
+# Cloudflare, used by the EBS reattach Lambda to keep DNS pointed at whatever
+# public IP the current instance actually has, since spot instances get a
+# new IP on every relaunch. Avoids ever needing an Elastic IP.
+#
+# cloudflare_zone_id: Cloudflare dashboard > your domain > Overview page,
+# right sidebar, labeled "Zone ID"
+#
+# cloudflare_domain_name: just the subdomain part, e.g. "dev" for
+# dev.yourdomain.com, NOT the full domain
+#
+# cloudflare_zone_name: your root domain as registered in Cloudflare
+#
+# cloudflare_token_secret_name: an API Token (not the old Global API Key)
+# scoped to "Edit zone DNS" for just this one zone, stored as a plain
+# string secret, never JSON
+cloudflare_zone_id           = "your-zone-id-from-cloudflare-dashboard"
+cloudflare_domain_name       = "dev"
+cloudflare_zone_name         = "yourdomain.com"
+cloudflare_token_secret_name = "staging/cloudflare-api-token"

@@ -196,7 +196,3 @@ Based on `ap-south-1`, a `t3.medium`-class instance, roughly 35 working hours a 
 | Lambda, API Gateway, EventBridge | ~$0 at this volume |
 | CloudWatch Logs | ~$0.05 |
 | **Total** | **~$4.95 – $5.65/month** |
-
-## License
-
-Add your preferred license here (MIT is a common default for infrastructure repos like this).

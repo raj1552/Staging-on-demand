@@ -143,3 +143,26 @@ variable "tags" {
     ManagedBy   = "terraform"
   }
 }
+
+# ---------------------------------------------------------------------------
+# Cloudflare
+# ---------------------------------------------------------------------------
+variable "cloudflare_zone_id" {
+  description = "Cloudflare Zone ID"
+  type        = string
+}
+
+variable "cloudflare_domain_name" {
+  description = "DNS record that should be updated"
+  type        = string
+}
+
+variable "cloudflare_zone_name" {
+  description = "Cloudflare zone name"
+  type        = string
+}
+
+variable "cloudflare_token_secret_name" {
+  description = "Secrets Manager secret containing the Cloudflare API token"
+  type        = string
+}

@@ -7,7 +7,7 @@ resource "aws_autoscaling_lifecycle_hook" "ebs_attach" {
   name                   = "${var.project_name}-${var.environment}-ebs-attach"
   autoscaling_group_name = aws_autoscaling_group.staging.name
   lifecycle_transition   = "autoscaling:EC2_INSTANCE_LAUNCHING"
-  heartbeat_timeout      = 300 # 5 min — plenty for an attach-volume call
+  heartbeat_timeout      = 300       # 5 min — plenty for an attach-volume call
   default_result         = "ABANDON" # fail closed: no cert data, no traffic
 }
 
@@ -48,16 +48,32 @@ resource "aws_iam_role_policy" "ebs_reattach_lambda_policy" {
           "ec2:DescribeVolumes",
           "ec2:DescribeInstances"
         ]
-        Resource = "*" # attach/detach targets are dynamic per-launch instance IDs
+        Resource = "*"
       },
+
       {
-        Effect   = "Allow"
-        Action   = ["autoscaling:CompleteLifecycleAction"]
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "arn:aws:secretsmanager:${var.aws_region}:*:secret:${var.cloudflare_token_secret_name}*"
+      },
+
+      {
+        Effect = "Allow"
+        Action = [
+          "autoscaling:CompleteLifecycleAction"
+        ]
         Resource = aws_autoscaling_group.staging.arn
       },
+
       {
-        Effect   = "Allow"
-        Action   = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
         Resource = "arn:aws:logs:${var.aws_region}:*:log-group:/aws/lambda/${var.project_name}-${var.environment}-ebs-reattach*"
       }
     ]
@@ -74,11 +90,16 @@ resource "aws_lambda_function" "ebs_reattach" {
   timeout          = 120
 
   environment {
-    variables = {
-      EBS_VOLUME_ID = aws_ebs_volume.staging_data.id
-      DEVICE_NAME   = var.ebs_device_name
-    }
+  variables = {
+    EBS_VOLUME_ID = aws_ebs_volume.staging_data.id
+    DEVICE_NAME   = var.ebs_device_name
+
+    DOMAIN_NAME                  = var.cloudflare_domain_name
+    CLOUDFLARE_ZONE_NAME         = var.cloudflare_zone_name
+    CLOUDFLARE_ZONE_ID           = var.cloudflare_zone_id
+    CLOUDFLARE_TOKEN_SECRET_NAME = var.cloudflare_token_secret_name
   }
+}
 
   tags = var.tags
 }

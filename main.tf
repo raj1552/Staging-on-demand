@@ -116,9 +116,9 @@ resource "aws_iam_instance_profile" "staging" {
 # Launch template
 # ---------------------------------------------------------------------------
 resource "aws_launch_template" "staging" {
-  name_prefix   = "${var.project_name}-${var.environment}-"
-  image_id      = data.aws_ami.ubuntu.id
-  key_name      = var.key_name
+  name_prefix = "${var.project_name}-${var.environment}-"
+  image_id    = data.aws_ami.ubuntu.id
+  key_name    = var.key_name
 
   vpc_security_group_ids = [aws_security_group.staging.id]
 
@@ -158,7 +158,7 @@ resource "aws_autoscaling_group" "staging" {
     launch_template {
       launch_template_specification {
         launch_template_id = aws_launch_template.staging.id
-        version             = "$Latest"
+        version            = "$Latest"
       }
 
       # Ordered fallback: try instance_types[0] first, fall through on
@@ -196,21 +196,21 @@ resource "aws_autoscaling_group" "staging" {
 resource "aws_autoscaling_schedule" "scale_up" {
   scheduled_action_name  = "${var.project_name}-${var.environment}-scale-up"
   autoscaling_group_name = aws_autoscaling_group.staging.name
-  recurrence              = var.schedule_start_cron
-  time_zone               = var.timezone
-  min_size                = 1
-  max_size                = 1
-  desired_capacity        = 1
+  recurrence             = var.schedule_start_cron
+  time_zone              = var.timezone
+  min_size               = 1
+  max_size               = 1
+  desired_capacity       = 1
 }
 
 resource "aws_autoscaling_schedule" "scale_down" {
   scheduled_action_name  = "${var.project_name}-${var.environment}-scale-down"
   autoscaling_group_name = aws_autoscaling_group.staging.name
-  recurrence              = var.schedule_stop_cron
-  time_zone               = var.timezone
-  min_size                = 0
-  max_size                = 0
-  desired_capacity        = 0
+  recurrence             = var.schedule_stop_cron
+  time_zone              = var.timezone
+  min_size               = 0
+  max_size               = 0
+  desired_capacity       = 0
 }
 
 # ---------------------------------------------------------------------------
@@ -273,8 +273,8 @@ resource "aws_lambda_function" "holiday_check" {
   environment {
     variables = {
       ASG_NAME                 = aws_autoscaling_group.staging.name
-      CALENDAR_ID               = var.google_calendar_id
-      GOOGLE_CREDS_SECRET_NAME  = var.google_creds_secret_name
+      CALENDAR_ID              = var.google_calendar_id
+      GOOGLE_CREDS_SECRET_NAME = var.google_creds_secret_name
     }
   }
 
